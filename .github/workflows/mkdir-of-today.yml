@@ -4,11 +4,6 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 defaults:
   run:
     shell: bash
@@ -24,7 +19,15 @@ jobs:
         with:
           submodules: recursive
       - name: mkdir
-        run: bash mkdir.sh
+        run:  |
+          if [ $# -eq 0 ]; then
+            date=$(date +%Y%m%d)
+          elif [ $# -eq 1 ]; then
+            date=$1
+          fi
+          mkdir -p $date
+          echo "# ${date}" > $date/README.md
+          git add $date/README.md
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
